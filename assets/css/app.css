@@ -1,0 +1,66 @@
+/* Train scheudle CSS */
+body {
+  /* Remove margins and padding around content */
+  margin: 0;
+  padding: 0;
+  /* Fix background during scrolling */
+  background-attachment: fixed;
+  /* Use scalable background image (cross borwser) */
+  background-image: url("../images/railway-62849_1920.jpg");
+  background-position: center center;
+  background-attachment: fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  color: #003A6C;
+}
+
+header .jumbotron {
+  /* Controling the size of a jumbotron */
+  padding-top: 20px;
+  padding-bottom: 12px;
+}
+
+.container {
+  /* Transparent background */
+  opacity: 0.9;
+}
+
+.wrapper {
+  min-height: 400px;  
+}
+
+.card {
+  background-color: #DBE9F4;
+}
+
+.tableHeader {
+  font-size: 1.2em;
+}
+
+.newTrainForm {
+  padding: 0px 5px 0px 5px;
+}
+
+form label {
+  font-weight: bold;
+  font-size: .7em;
+}
+
+/*  Footer ..................................... */
+footer .jumbotron {
+  /* Controling the size of a jumbotron */
+  padding-top: 5px;
+  padding-bottom: 2px;
+}
+
+/*  Media Queries ...................... */
+
+@media screen and (max-width: 767px) {
+  p.scrollForSmall:after {
+    content: "  ( scroll right -> )";
+    font-size: .6em;
+  }
+  
+}

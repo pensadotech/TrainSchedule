@@ -2,36 +2,135 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Train Schedule</title>
-
-    <!-- Bootstarap CSS -->
-    <link href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB'
-        crossorigin='anonymous'>
-    <!-- applciaiton CSS -->
-    <link rel="stylesheet" href="./assests/css/app.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Train Schedule</title>
+  <link rel="icon" href="./assets/images/TrainImg.png">
+  <!-- Awsome fonts and icons -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+    crossorigin="anonymous">
+  <!-- Bootstarap CSS -->
+  <link href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB'
+    crossorigin='anonymous'>
+  <!-- applciaiton CSS -->
+  <link rel="stylesheet" href="./assets/css/app.css">
 
 </head>
 
 <body>
 
+  <header class="header container ">
+    <div class="jumbotron bg-dark text-white text-center mb-3">
+      <h1><i class="fas fa-train"></i></i> Train Schedules</h1>
+      <p class="text-warning">Any time is train time</p>
+    </div>
+  </header>
 
-    <!-- java scripts -->
-    <!-- Bootstarp javascripts -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-        crossorigin="anonymous"></script>
-    <!-- Firebase Reference -->
-    <script src="https://www.gstatic.com/firebasejs/5.4.2/firebase.js"></script>
-    <!-- moment -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
-    <!-- Applicaiton javascripts -->
-    <script src="./assests/javascripts/app.js"></script>
+  <div class="container wrapper">
+
+    <!-- row 1 -->
+    <div class="row">
+      <div class="col-sm-12">
+
+        <!-- Collapsible panel -->
+        <button type="button" id="addButton" class="btn btn-primary" data-toggle="collapse" data-target="#addTrain">
+          <i class="fas fa-plus-circle"></i>
+          Add Train
+        </button>
+        <div id="addTrain" class="collapse">
+
+          <div class="card mb-2 bg-light">
+            <div class="card-body">
+              <div class="tableHeader bg-dark text-white">
+                <p>New train schedule</p>
+              </div>
+              <form class="newTrainForm">
+                <div class="form-group">
+                  <label for="tName">Train Name</label>
+                  <input class="form-control" id="tName" placeholder="Train name..." type="text">
+                </div>
+                <div class="form-group">
+                  <label for="tDestination">Destination</label>
+                  <input class="form-control" id="tDestination" placeholder="Destination..." type="text">
+                </div>
+                <div class="form-group">
+                  <label for="tFirstTime">First Train time (HH:MM 24-hrs format)</label>
+                  <input class="form-control" id="tFirstTime" placeholder="First Train time ..." type="text">
+                </div>
+                <div class="form-group">
+                  <label for="tFreq">Frequencey (in minutes)</label>
+                  <input class="form-control" id="tFreq" placeholder="Frequency..." type="text">
+                </div>
+                <button class="btn btn-primary float-right" onclick="addTrainSchedule()">Add</button>
+              </form>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="row">
+      <div class="col-sm-12">
+
+        <!-- Train schedule body  -->
+        <div class="card">
+          <div class="card-body">
+            <div class="tableHeader bg-dark text-white ">
+              <p class="scrollForSmall">Current Train Schedule</p>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-striped table-hover table-sm">
+                <thead>
+                  <tr>
+                    <th scope="col">Train Name</th>
+                    <th scope="col">Destination</th>
+                    <th scope="col">Next Arrival</th>
+                    <th scope="col">Minutes Away</th>
+                    <th scope="col">Frequency(min)</th>    
+                  </tr>
+                </thead>
+                <tbody id="train-schedule-data">
+                  <!-- Employee info goes here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- end train schedule -->
+
+      </div>
+    </div>
+    <!-- row 2 end -->
+
+  </div>
+  <!-- Container end -->
+
+  <footer class="footer container">
+    <div class="jumbotron bg-dark text-white text-center mt-3">
+      <p>Copyright &copy;</p>
+    </div>
+  </footer>
+
+
+  <!-- java scripts -->
+  <!-- Bootstarp javascripts -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+    crossorigin="anonymous"></script>
+  <!-- Firebase Reference -->
+  <script src="https://www.gstatic.com/firebasejs/5.4.2/firebase.js"></script>
+  <!-- moment -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+  <!-- Applicaiton javascripts -->
+  <script src="./assets/javascripts/app.js"></script>
 
 </body>
+
 </html>
