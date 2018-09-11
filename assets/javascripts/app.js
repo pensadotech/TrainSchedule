@@ -19,6 +19,7 @@ const db = firebase.database();
 // Create a reference to train scheulde folder
 let trainSchRef = db.ref('trainSchedule');
 
+// Add Button event .............................................
 function addTrainSchedule() {
 
     // Control default behavior for "submit" button
@@ -27,14 +28,17 @@ function addTrainSchedule() {
     // Retreive data from screen
     let trainName = document.getElementById("tName").value.trim();
     let trainDestination = document.getElementById("tDestination").value.trim();
-    let fstTrainTime = document.getElementById("tFirstTime").value.trim();
+    let fstTime = document.getElementById("tFirstTime").value.trim();
     let trainFreq = document.getElementById("tFreq").value.trim();
+
+    // get time in ms since midnight
+    let fstTimeMS = getMsSinceMidnight(fstTime);
 
     // create nnew train scheduel obj
     let newTrainSchedule = {
         trainName: trainName,
         destination: trainDestination,
-        fstTrainTime: fstTrainTime,
+        fstTimeMS: fstTimeMS,
         frequency: trainFreq
     }
 
@@ -58,27 +62,52 @@ function addTrainSchedule() {
     addTrainButton.click();
 }
 
+// Database record added event ..................................
 trainSchRef.on('child_added', data => {
 
     // use val() to retrieve the objects
     const trainSchedule = data.val();
-    // console.log(trainSchedule);
 
     if (trainSchedule != null) {
+
         // Store everything into a variable.
         let trainName = trainSchedule.trainName;
         let destination = trainSchedule.destination;
-        let fstTrainTime = trainSchedule.fstTrainTime;
+        let fstTimeMS = trainSchedule.fstTimeMS;
         let frequency = trainSchedule.frequency;
+
+        let fstTime = getTimeStr(fstTimeMS);
+        var startDatetimeString = getCurrentDateString();
+        // Start date-time: MM/DD/YYYY HH:MM
+        startDatetimeString = startDatetimeString + " " + fstTime;
+        
+        // Get starmoment
+        var startmoment = moment(startDatetimeString);
+        var curMoment = moment();
+
+        var starMomentUTC = startmoment.format("X");
+        var curMomentUTC = curMoment.format('X');
+
         let nextArrival = 0;
         let minAway = 0;
 
-        // Employee Info
-        console.log(trainName);
-        console.log(destination);
-        console.log(fstTrainTime);
-        console.log(frequency);
+        // Increment by frequencey until next exit is greater or equal
+        while (starMomentUTC < curMomentUTC) {
+            startmoment.add(frequency, 'minutes');
+            starMomentUTC = startmoment.format("X");
+        }
 
+        if (starMomentUTC === curMomentUTC) {
+            nextArrival = moment.unix(starMomentUTC).format('hh:mm a');
+            minAway = 0;
+        } else if (starMomentUTC > curMomentUTC) {
+            nextArrival = moment.unix(starMomentUTC).format('hh:mm a');
+            minAway = startmoment.diff(curMoment, "minutes") + 1;
+        }
+
+        // convert minutes to hours, if apply
+        minAway = getMinutesInHours(minAway);
+        
         // create a new table row
         let tblRow = document.createElement('tr');
         //Train Name
@@ -86,112 +115,18 @@ trainSchRef.on('child_added', data => {
         tblCellTrainName.innerHTML = trainName;
         //Destination
         let tblCellDestination = tblRow.appendChild(document.createElement('td'));
-        tblCellDestination.innerHTML = destination; 
+        tblCellDestination.innerHTML = destination;
         // Next arrival   
         let tblCellNextArrival = tblRow.appendChild(document.createElement('td'));
-        tblCellNextArrival.innerHTML = nextArrival;   
+        tblCellNextArrival.innerHTML = nextArrival;
         // Minutes Away
         let tblCellMinAway = tblRow.appendChild(document.createElement('td'));
-        tblCellMinAway.innerHTML = minAway;   
+        tblCellMinAway.innerHTML = minAway;
         // Frequency  
         let tblCellFrequency = tblRow.appendChild(document.createElement('td'));
-        tblCellFrequency.innerHTML = frequency;   
+        tblCellFrequency.innerHTML = frequency;
 
         // Append card to div
         document.getElementById('train-schedule-data').appendChild(tblRow);
     }
 })
-
-// TST
-var firstTime = "9:00";
-var freq = "30"
-
-// now: seconds since midnight
-var currdate = new Date("09/09/2018 " + firstTime);
-console.log(currdate.toString('mm/dd/yyyy HH:mm'))
-var midnight = new Date(
-    currdate.getFullYear(),
-    currdate.getMonth(),
-    currdate.getDate(),
-    0, 0, 0
-)
-var msSinceMidnight = currdate.getTime() - midnight.getTime();
-console.log(msSinceMidnight);
-
-let totalSeconds = msSinceMidnight / 1000
-console.log(totalSeconds);
-
-// Conver seconds since midnight to time string
-let hours = Math.floor(totalSeconds / 3600);
-totalSeconds %= 3600;
-let minutes = Math.floor(totalSeconds / 60);
-let seconds = totalSeconds % 60;
-let timeStr = hours.toString() + ":" + minutes.toString();
-console.log("hours:" + hours)
-console.log("minutes:" + minutes)
-console.log("seconds:" + seconds)
-console.log("Time:" + timeStr)
-
-// Add commputed time string into current date
-var currentDateStr = moment().format('MM/DD/YYYY')
-currentDateStr = currentDateStr + " " + timeStr;
-console.log(currentDateStr);
-
-// create a starimg point with todays date and staring time
-var startmoment = moment(currentDateStr);
-var starMomentUTC = moment(currentDateStr).format("X"); // convert ot UTC
-console.log(moment.unix(starMomentUTC).format('MM/DD/YYYY HH:mm:ss'))
-console.log(starMomentUTC)
-
-// current moment
-var curMoment = moment();
-var curMomentUTC = moment().format('X') // convert ot UTC
-console.log(moment.unix(curMomentUTC).format('MM/DD/YYYY HH:mm:ss'))
-console.log(curMomentUTC)
-
-// Get next arrival and minutes away
-let nextArrival = null;
-let minAway = null;
-
-// Increment by frequencey until next exit is greater or equal
-while(starMomentUTC < curMomentUTC) {
-    startmoment.add(freq,'minutes');
-    starMomentUTC = moment(startmoment).format("X");
-    console.log(moment.unix(starMomentUTC).format('MM/DD/YYYY HH:mm:ss'))
-}
-
-if (starMomentUTC === curMomentUTC) {
-    nextArrival = moment.unix(starMomentUTC).format('hh:mm:ss a');
-    minAway = 0;
-}
-else if (starMomentUTC > curMomentUTC) {
-    nextArrival = moment.unix(starMomentUTC).format('hh:mm:ss a');
-    minAway = startmoment.diff(curMoment, "minutes") + 1;
-}
-
-console.log(moment().format('hh:mm:ss a'))
-console.log(nextArrival)
-console.log(minAway)
-
-// convert to hpours
-if (minAway > 60) {
-    var hoursAway = Math.floor( minAway / 60);
-    var remMinAway = minAway - (hoursAway * 60 )
-    console.log(hoursAway)
-    console.log(remMinAway)
-}
-
-
-// Using moment 
-// var zeroMoment = moment('09/09/2018', "MM/DD/YYYY")
-// var curMoment = moment('09/09/2018 9:00', "MM/DD/YYYY HH:mm")
-// console.log(zeroMoment)
-// console.log(curMoment)
-
-// var momentDif = curMoment.diff(zeroMoment, "seconds");
-// console.log(momentDif);
-
-// console.log(myTime.diff(zeroHours, "seconds"))
-// console.log(moment.unix(timeDif).format("MM/DD/YYY HH:mm"))
-
-// console.log(moment('09/09/2018', "MM/DD/YYYY").add(timeDif).format('LLL') )
