@@ -34,7 +34,7 @@ function addTrainSchedule() {
     // get time in ms since midnight
     let fstTimeMS = getMsSinceMidnight(fstTime);
 
-    // create nnew train scheduel obj
+    // create new train scheduel obj
     let newTrainSchedule = {
         trainName: trainName,
         destination: trainDestination,
@@ -130,3 +130,5 @@ trainSchRef.on('child_added', data => {
         document.getElementById('train-schedule-data').appendChild(tblRow);
     }
 })
+
+
