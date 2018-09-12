@@ -19,6 +19,9 @@ const db = firebase.database();
 // Create a reference to train scheulde folder
 let trainSchRef = db.ref('trainSchedule');
 
+
+
+
 // Add Button event .............................................
 function addTrainSchedule() {
 
@@ -62,73 +65,116 @@ function addTrainSchedule() {
     addTrainButton.click();
 }
 
+// Delete schedule ..................
+function deleteTrainSchedule() {
+
+    // todo: function to refresh the schedue, delete, or update
+    trainSchRef.on('value', data => {
+
+        data.forEach(elementNode => {
+            var recKey = elementNode.key;
+            var trainSchedule = elementNode.val();
+
+            console.log("recKey: " + recKey)
+            console.log("trainName: " + trainSchedule.trainName)
+        });
+    })
+
+}
+
+// timer to refresh train every minute
+var intervalHandler= setInterval( function() { 
+    // clear all first 
+    document.getElementById('train-schedule-data').innerHTML = '';	
+    // refresh data
+    refreshTrainschedule();
+}, 1000)
+
+function refreshTrainschedule() {
+    // process all records in database
+    trainSchRef.on('value', data => {
+        //loop over all nodes
+        data.forEach(elementNode => {
+            // get node key and data
+            var recKey = elementNode.key;
+            var trainSchedule = elementNode.val();
+            // refresh data
+            displayTrainSchedule(recKey, trainSchedule);
+        });
+    })
+}
+
+function displayTrainSchedule(recKey, trainSchedule) {
+
+    // Store everything into a variable.
+    let trainName = trainSchedule.trainName;
+    let destination = trainSchedule.destination;
+    let fstTimeMS = trainSchedule.fstTimeMS;
+    let frequency = trainSchedule.frequency;
+
+    let fstTime = getTimeStr(fstTimeMS);
+    var startDatetimeString = getCurrentDateString();
+    // Start date-time: MM/DD/YYYY HH:MM
+    startDatetimeString = startDatetimeString + " " + fstTime;
+
+    // Get starmoment
+    var startmoment = moment(startDatetimeString);
+    var curMoment = moment();
+
+    var starMomentUTC = startmoment.format("X");
+    var curMomentUTC = curMoment.format('X');
+
+    let nextArrival = 0;
+    let minAway = 0;
+
+    // Increment by frequencey until next exit is greater or equal
+    while (starMomentUTC < curMomentUTC) {
+        startmoment.add(frequency, 'minutes');
+        starMomentUTC = startmoment.format("X");
+    }
+
+    if (starMomentUTC === curMomentUTC) {
+        nextArrival = moment.unix(starMomentUTC).format('hh:mm a');
+        minAway = 0;
+    } else if (starMomentUTC > curMomentUTC) {
+        nextArrival = moment.unix(starMomentUTC).format('hh:mm a');
+        minAway = startmoment.diff(curMoment, "minutes") + 1;
+    }
+
+    // convert minutes to hours, if apply
+    minAway = getMinutesInHours(minAway);
+
+    // create a new table row
+    let tblRow = document.createElement('tr');
+    //Train Name
+    let tblCellTrainName = tblRow.appendChild(document.createElement('td'));
+    tblCellTrainName.innerHTML = trainName;
+    //Destination
+    let tblCellDestination = tblRow.appendChild(document.createElement('td'));
+    tblCellDestination.innerHTML = destination;
+    // Next arrival   
+    let tblCellNextArrival = tblRow.appendChild(document.createElement('td'));
+    tblCellNextArrival.innerHTML = nextArrival;
+    // Minutes Away
+    let tblCellMinAway = tblRow.appendChild(document.createElement('td'));
+    tblCellMinAway.innerHTML = minAway;
+    // Frequency  
+    let tblCellFrequency = tblRow.appendChild(document.createElement('td'));
+    tblCellFrequency.innerHTML = frequency;
+
+    // Append card to div
+    document.getElementById('train-schedule-data').appendChild(tblRow);
+}
+
 // Database record added event ..................................
 trainSchRef.on('child_added', data => {
 
     // use val() to retrieve the objects
+    const recKey = data.key;
     const trainSchedule = data.val();
-
+    
+    // refresh schedule if node is available 
     if (trainSchedule != null) {
-
-        // Store everything into a variable.
-        let trainName = trainSchedule.trainName;
-        let destination = trainSchedule.destination;
-        let fstTimeMS = trainSchedule.fstTimeMS;
-        let frequency = trainSchedule.frequency;
-
-        let fstTime = getTimeStr(fstTimeMS);
-        var startDatetimeString = getCurrentDateString();
-        // Start date-time: MM/DD/YYYY HH:MM
-        startDatetimeString = startDatetimeString + " " + fstTime;
-        
-        // Get starmoment
-        var startmoment = moment(startDatetimeString);
-        var curMoment = moment();
-
-        var starMomentUTC = startmoment.format("X");
-        var curMomentUTC = curMoment.format('X');
-
-        let nextArrival = 0;
-        let minAway = 0;
-
-        // Increment by frequencey until next exit is greater or equal
-        while (starMomentUTC < curMomentUTC) {
-            startmoment.add(frequency, 'minutes');
-            starMomentUTC = startmoment.format("X");
-        }
-
-        if (starMomentUTC === curMomentUTC) {
-            nextArrival = moment.unix(starMomentUTC).format('hh:mm a');
-            minAway = 0;
-        } else if (starMomentUTC > curMomentUTC) {
-            nextArrival = moment.unix(starMomentUTC).format('hh:mm a');
-            minAway = startmoment.diff(curMoment, "minutes") + 1;
-        }
-
-        // convert minutes to hours, if apply
-        minAway = getMinutesInHours(minAway);
-        
-        // create a new table row
-        let tblRow = document.createElement('tr');
-        //Train Name
-        let tblCellTrainName = tblRow.appendChild(document.createElement('td'));
-        tblCellTrainName.innerHTML = trainName;
-        //Destination
-        let tblCellDestination = tblRow.appendChild(document.createElement('td'));
-        tblCellDestination.innerHTML = destination;
-        // Next arrival   
-        let tblCellNextArrival = tblRow.appendChild(document.createElement('td'));
-        tblCellNextArrival.innerHTML = nextArrival;
-        // Minutes Away
-        let tblCellMinAway = tblRow.appendChild(document.createElement('td'));
-        tblCellMinAway.innerHTML = minAway;
-        // Frequency  
-        let tblCellFrequency = tblRow.appendChild(document.createElement('td'));
-        tblCellFrequency.innerHTML = frequency;
-
-        // Append card to div
-        document.getElementById('train-schedule-data').appendChild(tblRow);
+        displayTrainSchedule(recKey, trainSchedule);
     }
 })
-
-
