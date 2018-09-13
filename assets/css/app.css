@@ -35,6 +35,10 @@ header .jumbotron {
   background-color: #DBE9F4;
 }
 
+.card-body {
+  padding: 0px 3px 0px 3px;
+}
+
 .tableHeader {
   font-size: 1.2em;
 }

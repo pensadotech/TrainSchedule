@@ -164,8 +164,6 @@ function resetTrainScheduleInput() {
     document.getElementById("tDestination").value = '';
     document.getElementById("tFirstTime").value = '';
     document.getElementById("tFreq").value = '';
-
-    pauseRefreshInterval = !pauseRefreshInterval;
 }
 
 // EVENT: Button Addd schedule .......................................
@@ -173,6 +171,8 @@ function SubmitTrainSchedule() {
 
     // Control default behavior for "submit" button
     event.preventDefault();
+     
+    pauseRefreshInterval = true;
 
     // reset possible errors
     document.getElementById("trainNameErr").innerHTML = '';
@@ -254,6 +254,8 @@ function SubmitTrainSchedule() {
     updateMode = false;
     trainToUpdateKey = '';
 
+    pauseRefreshInterval = false;
+
 }
 
 // EVENT: Delete schedule .......................................
@@ -276,8 +278,6 @@ function deleteTrainSchedule(recKey, trainName) {
 
 // EVENT: Update schedule ..........................................
 function updateTrainSchedule(recKey, trainName) {
-
-    console.log(recKey + " " + trainName);
 
     let destination = '';
     let fstTimeMS = '';
