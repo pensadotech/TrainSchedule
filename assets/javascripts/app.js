@@ -139,6 +139,7 @@ function doesTrainExist(trainName) {
 
     return availableTrain;
 }
+
 // EVENT: Database record child added event ..................................
 trainSchRef.on('child_added', data => {
     // it will only retreive teh child node that was added
@@ -157,6 +158,7 @@ var intervalHandler = setInterval(function () {
     }
 }, 1000)
 
+// EVENT: reset input on collapse or expand of panel
 function resetTrainScheduleInput() {
 
     // Clears all of the text-boxes
@@ -166,12 +168,12 @@ function resetTrainScheduleInput() {
     document.getElementById("tFreq").value = '';
 }
 
-// EVENT: Button Addd schedule .......................................
+// EVENT: Button submit schedule .......................................
 function SubmitTrainSchedule() {
 
     // Control default behavior for "submit" button
     event.preventDefault();
-     
+
     pauseRefreshInterval = true;
 
     // reset possible errors
@@ -239,7 +241,7 @@ function SubmitTrainSchedule() {
 
         // Clears all of the text-boxes
         resetTrainScheduleInput();
-         
+
         if (updateMode) {
             document.getElementById('train-schedule-data').innerHTML = '';
             refreshTrainschedule();
@@ -249,7 +251,7 @@ function SubmitTrainSchedule() {
         var addTrainButton = document.getElementById("addButton");
         addTrainButton.click();
     }
-    
+
     // Turn off update mode
     updateMode = false;
     trainToUpdateKey = '';
@@ -300,7 +302,7 @@ function updateTrainSchedule(recKey, trainName) {
         });
     })
 
- 
+
     if (updateMode) {
 
         // Open panel
