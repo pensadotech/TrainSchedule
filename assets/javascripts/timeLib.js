@@ -4,9 +4,11 @@ function getCurrentTimeString() {
     // current date-time
     let currDate = new Date();
     // get hours and seconds
-    let hours = currDate.getHours();
-    let minutes = currDate.getMinutes();
-
+    let hours = currDate.getHours().toString();
+    hours = hours.length > 1 ? hours : '0' + hours;
+    let minutes = currDate.getMinutes().toString();
+    minutes = minutes.length > 1 ? minutes : "0" + minutes;
+    
     return hours + ":" + minutes;
 }
 

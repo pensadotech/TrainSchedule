@@ -48,6 +48,10 @@ form label {
   font-size: .7em;
 }
 
+.rowBtn {
+  padding: 2px;
+}
+
 /*  Footer ..................................... */
 footer .jumbotron {
   /* Controling the size of a jumbotron */

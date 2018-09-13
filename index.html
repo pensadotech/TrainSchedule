@@ -24,6 +24,7 @@
     <div class="jumbotron bg-dark text-white text-center mb-3">
       <h1><i class="fas fa-train"></i></i> Train Schedules</h1>
       <p class="text-warning">Any time is train time</p>
+      <p id="currTime"></p>
     </div>
   </header>
 
@@ -34,7 +35,8 @@
       <div class="col-sm-12">
 
         <!-- Collapsible panel -->
-        <button type="button" id="addButton" class="btn btn-primary" data-toggle="collapse" data-target="#addTrain">
+        <button type="button" id="addButton" class="btn btn-primary" 
+                data-toggle="collapse" data-target="#addTrain" onclick="resetTrainScheduleInput()">
           <i class="fas fa-plus-circle"></i>
           Add Train
         </button>
@@ -43,36 +45,31 @@
           <div class="card mb-2 bg-light">
             <div class="card-body">
               <div class="tableHeader bg-dark text-white">
-                <p>New train schedule</p>
+                <p>Train schedule</p>
               </div>
               <form class="newTrainForm">
                 <div class="form-group">
-                  <label for="tName">Train Name</label>
+                  <label for="tName">Train Name <span id="trainNameErr" class="text-danger"></span></label>
                   <input class="form-control" id="tName" placeholder="Train name..." type="text">
                 </div>
                 <div class="form-group">
-                  <label for="tDestination">Destination</label>
+                  <label for="tDestination">Destination <span id="destErr" class="text-danger"></span></label>
                   <input class="form-control" id="tDestination" placeholder="Destination..." type="text">
                 </div>
                 <div class="form-group">
-                  <label for="tFirstTime">First Train time (HH:MM 24-hrs format)</label>
+                  <label for="tFirstTime">First Train time (HH:MM 24-hrs format) <span id="fstTimeErr" class="text-danger"></span></label>
                   <input class="form-control" id="tFirstTime" placeholder="First Train time ..." type="text">
                 </div>
                 <div class="form-group">
-                  <label for="tFreq">Frequencey (in minutes)</label>
+                  <label for="tFreq">Frequencey (in minutes) <span id="frqErr" class="text-danger"></span></label>
                   <input class="form-control" id="tFreq" placeholder="Frequency..." type="text">
                 </div>
-                <button class="btn btn-primary float-right" onclick="addTrainSchedule()">Add</button>
+                <button class="btn btn-primary float-right" onclick="SubmitTrainSchedule()">Submit</button>
               </form>
             </div>
           </div>
 
         </div>
-
-        <button type="button" class="btn btn-primary"  onclick="deleteTrainSchedule()">
-          Delete Train
-        </button>
-              
 
       </div>
     </div>
@@ -91,6 +88,8 @@
               <table class="table table-striped table-hover table-sm">
                 <thead>
                   <tr>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
                     <th scope="col">Train Name</th>
                     <th scope="col">Destination</th>
                     <th scope="col">Next Arrival</th>
