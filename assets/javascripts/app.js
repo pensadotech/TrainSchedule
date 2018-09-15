@@ -115,7 +115,7 @@ function displayTrainSchedule(recKey, trainSchedule) {
 function refreshTrainschedule() {
     document.getElementById('train-schedule-data').innerHTML = '';
     // process all records in database
-    trainSchRef.on('value', data => {
+    trainSchRef.orderByChild('trainName').on('value', data => {
         //loop over all nodes
         data.forEach(elementNode => {
             // get node key and data
@@ -141,7 +141,7 @@ function doesTrainExist(trainName) {
 }
 
 // EVENT: Database record child added event ..................................
-trainSchRef.on('child_added', data => {
+trainSchRef.orderByChild('trainName').on('child_added', data => {
     // it will only retreive teh child node that was added
     if (data.val() != null) {
         displayTrainSchedule(data.key, data.val());
