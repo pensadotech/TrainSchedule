@@ -2,12 +2,12 @@
 
 // Firebase Configuration
 var config = {
-    apiKey: "AIzaSyDSKdLUm9h_eqDEGcn6XIrKUWhP11MIKCA",
-    authDomain: "trainschedule-ec927.firebaseapp.com",
-    databaseURL: "https://trainschedule-ec927.firebaseio.com",
-    projectId: "trainschedule-ec927",
-    storageBucket: "",
-    messagingSenderId: "754223858796"
+    apiKey: "<your api key>",
+    authDomain: "<your domain>",
+    databaseURL: "<your database URL>",
+    projectId: "<your project id>",
+    storageBucket: "<your storage bucket>",
+    messagingSenderId: "<your messaging sender ID>"
 };
 
 // Initialize Firebase
